@@ -1,0 +1,42 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install beautifulsoup4 pandas numpy faker pytest
+          pip install streamlit plotly scikit-learn xgboost shap joblib
+          # Lightweight installs only — skip heavy ML/NLP for CI speed
+          # pip install transformers torch  # uncomment if GPU runner available
+
+      - name: Generate mock data
+        run: python generate_mock_belarc.py
+
+      - name: Run ETL parser
+        run: python parse_belarc.py
+
+      - name: Load database
+        run: python load_database.py
+
+      - name: Run unit tests
+        run: pytest tests/ -v --tb=short
+        env:
+          ASSET_DB_PATH: lseg_assets.db
