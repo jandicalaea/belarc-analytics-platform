@@ -219,7 +219,3 @@ belarc-analytics-platform/
 - **XGBoost vs Random Forest** — both are trained and cross-validated; the better model is selected automatically and saved
 
 ---
-
-## Author
-
-Built as a data engineering and analytics portfolio project targeting a Junior Data Scientist role.
